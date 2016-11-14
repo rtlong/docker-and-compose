@@ -6,6 +6,7 @@ ARG compose_version=1.8.0
 RUN set -x \
  && apk update \
  && apk add \
+      bash \
       ca-certificates \
       curl \
       openssl \
