@@ -19,12 +19,12 @@ cache_images() {
     printf "Saving the following images:\n$images_to_cache\n\n"
     docker save -o "/tmp/$image_archive" "${image_ids[@]}"
 
-    sudo mv "/tmp/$image_archive" "$destination"
+    mv "/tmp/$image_archive" "$destination"
     echo "Images saved to $cached_image_archive_path"
 
     echo "Saving image metadata ..."
-    sudo tar czf "/tmp/$image_metadata" -C /var/lib/docker/image .
-    sudo mv "/tmp/$image_metadata" "$destination"
+    tar czf "/tmp/$image_metadata" -C /var/lib/docker/image .
+    mv "/tmp/$image_metadata" "$destination"
 
     echo "Done."
   else
@@ -36,7 +36,7 @@ restore_images() {
   if [[ -f $cached_image_archive_path ]] && [[ -f $cached_image_metadata_path ]]; then
     echo "Restoring images ..."
     docker load < "$cached_image_archive_path"
-    sudo tar xf "$cached_image_metadata_path" -C /var/lib/docker/image
+    tar xf "$cached_image_metadata_path" -C /var/lib/docker/image
     echo "Images restored."
     docker images
   else
