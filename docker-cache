@@ -6,9 +6,7 @@ set -euo pipefail
 
 destination="${DOCKER_CACHE_DIR:-/tmp/docker-cache}"
 image_archive="docker-image-archive.tar"
-image_metadata="docker-image-metadata.tar.gz"
 cached_image_archive_path="$destination/$image_archive"
-cached_image_metadata_path="$destination/$image_metadata"
 
 cache_images() {
 	images_to_cache="$(docker images | awk '{print $1, "|", $3, "|", $7$8}' | grep -v '<none>' | tail -n +2)"
@@ -22,10 +20,6 @@ cache_images() {
     mv "/tmp/$image_archive" "$destination"
     echo "Images saved to $cached_image_archive_path"
 
-    echo "Saving image metadata ..."
-    tar czf "/tmp/$image_metadata" -C /var/lib/docker/image .
-    mv "/tmp/$image_metadata" "$destination"
-
     echo "Done."
   else
     echo "No images found."
@@ -33,10 +27,9 @@ cache_images() {
 }
 
 restore_images() {
-  if [[ -f $cached_image_archive_path ]] && [[ -f $cached_image_metadata_path ]]; then
+  if [[ -f $cached_image_archive_path ]]; then
     echo "Restoring images ..."
     docker load < "$cached_image_archive_path"
-    tar xf "$cached_image_metadata_path" -C /var/lib/docker/image
     echo "Images restored."
     docker images
   else
