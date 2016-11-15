@@ -17,7 +17,7 @@ cache_images() {
     printf "Saving the following images:\n$images_to_cache\n\n"
     docker save -o "/tmp/$image_archive" "${image_ids[@]}"
 
-    mv "/tmp/$image_archive" "$destination"
+    mv "/tmp/$image_archive" "$cached_image_archive_path"
     echo "Images saved to $cached_image_archive_path"
 
     echo "Done."
@@ -45,6 +45,12 @@ usage() {
 main() {
 	cmd="${1:-}"
 	[[ $cmd ]] || usage
+
+	if [[ -e $destination ]]; then
+		[[ -d $destination ]] || { echo "ERROR: destination $destination exists and is not a directory!"; exit 1 }
+	else
+		mkdir -p "$destination"
+	fi
 
   case "$cmd" in
     "save" )
