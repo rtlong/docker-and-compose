@@ -46,13 +46,14 @@ main() {
 	cmd="${1:-}"
 	[[ $cmd ]] || usage
 
-	if [[ -e $destination ]]; then
-		[[ -d $destination ]] || { echo "ERROR: destination $destination exists and is not a directory!"; exit 1 }
+	if [[ -e $destination && ! -d $destination ]]; then
+			echo "ERROR: destination $destination exists and is not a directory!"
+			exit 1
 	else
-		mkdir -p "$destination"
+			mkdir -p "$destination"
 	fi
 
-  case "$cmd" in
+	case "$cmd" in
     "save" )
       cache_images
       ;;
